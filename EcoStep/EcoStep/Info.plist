@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>我们需要您的位置信息以展示附近的帖子。</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>我们需要更新您的健康数据以提供更好的活动记录。</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>我们需要访问您的健康数据以记录步数和距离。</string>
+</dict>
+</plist>
