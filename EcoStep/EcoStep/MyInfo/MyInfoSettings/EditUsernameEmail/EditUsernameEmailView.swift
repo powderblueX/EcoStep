@@ -10,6 +10,8 @@ import SwiftUI
 struct EditUsernameEmailView: View {
     @Binding var userInfo: MyInfoModel?
     @StateObject private var viewModel = EditUsernameEmailViewModel()
+    private let genders = ["男", "女"]
+    
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
@@ -24,6 +26,22 @@ struct EditUsernameEmailView: View {
                     .autocapitalization(.none)
                     .keyboardType(.emailAddress)
             }
+            
+            Section(header: Text("生日")) {
+                DatePicker("生日", selection: $viewModel.birthday, displayedComponents: .date)
+                    .datePickerStyle(WheelDatePickerStyle())
+                    .labelsHidden()
+                    .environment(\.locale, Locale(identifier: "zh_CN")) // 设置中文
+            }
+
+            Section(header: Text("性别")) {
+                Picker("性别", selection: $viewModel.gender) {
+                    ForEach(genders, id: \.self) {
+                        Text($0)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            }
 
             Button(action: {
                 viewModel.saveChanges { success in
@@ -31,6 +49,8 @@ struct EditUsernameEmailView: View {
                         // 更新绑定的数据
                         userInfo?.username = viewModel.newUsername
                         userInfo?.email = viewModel.newEmail
+                        userInfo?.birthday = viewModel.birthday
+                        userInfo?.gender = viewModel.gender
                     }
                 }
             }) {

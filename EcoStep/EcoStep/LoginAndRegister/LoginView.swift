@@ -16,23 +16,21 @@ struct LoginView: View {
                 .font(.largeTitle)
                 .bold()
             
-            Text("用户名")
+            Text("用户名：")
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 1)
                 .padding(.top, 7)
             TextField("请输入您的用户名", text: $viewModel.username)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
+                .padding(.horizontal)
             
-            Text("密码")
+            Text("密码：")
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 1)
                 .padding(.top, 7)
-            SecureField("请输入您的密码", text: $viewModel.password)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+            PasswordField(password: $viewModel.password, placeholder: "请输入您的密码")
             
             if viewModel.isLogining {
                 ProgressView("登录中...") // 显示加载指示器
@@ -64,4 +62,8 @@ struct LoginView: View {
         }
         .padding()
     }
+}
+
+#Preview {
+    LoginView(viewModel: LoginViewModel())
 }

@@ -9,12 +9,13 @@ import SwiftUI
 
 struct SettingsView: View {
     @Binding var userInfo: MyInfoModel?
+    @StateObject private var viewModel = SettingsViewModel()
 
     var body: some View {
         List {
             Section(header: Text("个人信息修改")) {
                 NavigationLink(destination: EditUsernameEmailView(userInfo: $userInfo)) {
-                    Text("修改用户名和邮箱")
+                    Text("修改基础信息")
                 }
 
                 NavigationLink(destination: EditAvatarView()) {
@@ -27,13 +28,25 @@ struct SettingsView: View {
                     Text("修改密码")
                 }
             }
+            
+            // 退出登录
+            Button("退出登录") {
+                viewModel.showLogoutAlert = true // 显示退出确认弹窗
+            }
+            .foregroundColor(.red)
         }
         .navigationTitle("设置")
+        .alert(isPresented: $viewModel.showLogoutAlert) {
+            Alert(
+                title: Text("确认退出"),
+                message: Text("你确定要退出登录吗？"),
+                primaryButton: .destructive(Text("退出")) {
+                    viewModel.logout() // 执行退出登录操作
+                },
+                secondaryButton: .cancel(Text("取消"))
+            )
+        }
     }
 }
 
-// 定义 ErrorMessage 类型
-struct ErrorMessage: Identifiable {
-    var id = UUID() // 符合 Identifiable 协议的要求
-    var message: String
-}
+

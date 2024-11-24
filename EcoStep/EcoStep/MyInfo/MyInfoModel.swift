@@ -12,7 +12,7 @@ struct MyInfoModel: Identifiable {
     var username: String    // 用户名
     var avatarURL: URL?     // 用户头像 URL
     var email: String       // 用户邮箱
-    var birthday: Date?     // 用户生日
+    var birthday: Date      // 用户生日
     var gender: String      // 用户性别
     var posts: [Post]       // 用户发帖记录
     var favorites: [Post]   // 用户收藏的帖子

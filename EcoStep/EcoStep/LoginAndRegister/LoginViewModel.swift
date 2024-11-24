@@ -12,7 +12,6 @@ class LoginViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var errorMessage: String? = nil
     @Published var isLogining: Bool = false
-    @Published var isLoggedIn: Bool = false
     @Published var alertMessage: String = ""// 提示框显示的消息
     @Published var showAlert: Bool = false // 用来控制提示框显示
     
@@ -36,8 +35,8 @@ class LoginViewModel: ObservableObject {
                 self?.isLogining = false
                 switch result {
                 case .success:
-                    self?.isLoggedIn = true
-                    print("isLoggedIn 状态更新为: \(self?.isLoggedIn ?? false)")
+                    AppState.shared.isLoggedIn = true
+                    print("isLoggedIn 状态更新为: \(AppState.shared.isLoggedIn)")
                     self?.alertMessage = "登录成功！"
                     self?.showAlert = true
                     print("登录成功！")

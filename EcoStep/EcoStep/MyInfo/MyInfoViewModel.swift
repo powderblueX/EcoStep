@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 class MyInfoViewModel: ObservableObject {
     @Published var userInfo: MyInfoModel?
@@ -14,11 +15,11 @@ class MyInfoViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     private let leanCloudService = LeanCloudService()
-
+    
     init() {
         fetchUserInfo()
     }
-
+    
     // 获取用户信息
     func fetchUserInfo() {
         isLoading = true
@@ -37,7 +38,7 @@ class MyInfoViewModel: ObservableObject {
             // TODO: 可以实现提示用户重新登录，并退到登录界面
             return
         }
-
+        
         // 调用 LeanCloudService 获取用户信息
         leanCloudService.fetchUserInfo(objectId: objectId, username: username) { [weak self] result in
             DispatchQueue.main.async {
@@ -51,7 +52,7 @@ class MyInfoViewModel: ObservableObject {
             }
         }
     }
-
+    
     // 更新用户信息
     func updateUserInfo(newInfo: MyInfoModel) {
         isLoading = true
@@ -62,7 +63,7 @@ class MyInfoViewModel: ObservableObject {
             self.errorMessage = "未找到已登录的ID"
             return
         }
-
+        
         // 调用 LeanCloudService 更新用户信息
         leanCloudService.updateUserInfo(objectId: objectId, newInfo: newInfo) { [weak self] result in
             DispatchQueue.main.async {
@@ -75,11 +76,6 @@ class MyInfoViewModel: ObservableObject {
                 }
             }
         }
-    }
-
-    func logout() {
-        leanCloudService.logout()
-        // TODO: 处理退出逻辑，如返回登录页面
     }
 }
 

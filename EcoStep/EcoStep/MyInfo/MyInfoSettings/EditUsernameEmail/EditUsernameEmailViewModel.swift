@@ -11,6 +11,8 @@ import LeanCloud
 class EditUsernameEmailViewModel: ObservableObject {
     @Published var newUsername: String = ""
     @Published var newEmail: String = ""
+    @Published var birthday: Date = Date()
+    @Published var gender: String = "男" // 默认值
     @Published var errorMessage: ErrorMessage?
     @Published var isButtonDisabled: Bool = true
     @Published var isUsernameEmailUpdated: Bool = false
@@ -24,6 +26,8 @@ class EditUsernameEmailViewModel: ObservableObject {
     func initializeFields(with userInfo: MyInfoModel?) {
         newUsername = userInfo?.username ?? ""
         newEmail = userInfo?.email ?? ""
+        birthday = userInfo?.birthday ?? Date()
+        gender = userInfo?.gender ?? "男"
         validateFields()
     }
 
@@ -50,15 +54,20 @@ class EditUsernameEmailViewModel: ObservableObject {
             let user = LCObject(className: "_User", objectId: LCString(objectId))
             try user.set("username", value: newUsername)
             try user.set("email", value: newEmail)
+            try user.set("birthday", value: LCDate(birthday))
+            try user.set("gender", value: gender)
 
             user.save { result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success:
                         self.isUsernameEmailUpdated = true
-                        self.alertType = .success("用户名/电子邮箱更新成功")
+                        self.alertType = .success("基本信息更新成功")
                         // 更新 UserDefaults
                         UserDefaults.standard.set(self.newUsername, forKey: "username")
+                        UserDefaults.standard.set(self.newEmail, forKey: "email")
+                        UserDefaults.standard.set(self.birthday, forKey: "birthday")
+                        UserDefaults.standard.set(self.gender, forKey: "gender")
                         completion(true)
                     case .failure(let error):
                         self.alertType = .error("保存失败：\(error.localizedDescription)")

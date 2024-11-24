@@ -13,13 +13,17 @@ struct ChangePasswordView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("当前密码")) {
-                SecureField("当前密码", text: $viewModel.currentPassword)
+            Section(header: Text("当前密码")
+                .font(.title3)
+                .foregroundColor(Color.black)) {
+                PasswordField(password: $viewModel.currentPassword, placeholder: "请输入您的密码")
             }
             
-            Section(header: Text("新密码")) {
-                SecureField("新密码", text: $viewModel.newPassword)
-                SecureField("确认新密码", text: $viewModel.confirmPassword)
+            Section(header: Text("新密码")
+                .font(.title3)
+                .foregroundColor(Color.black)) {
+                PasswordField(password: $viewModel.newPassword, placeholder: "新密码")
+                PasswordField(password: $viewModel.confirmPassword, placeholder: "确认新密码")
             }
             
             Button(action: {
@@ -52,4 +56,8 @@ struct ChangePasswordView: View {
         }
         .navigationTitle("修改密码")
     }
+}
+
+#Preview {
+    ChangePasswordView()
 }

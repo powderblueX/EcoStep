@@ -9,9 +9,12 @@ import SwiftUI
 
 import SwiftUI
 import Kingfisher
+import Foundation
 
 struct MyInfoView: View {
     @StateObject private var viewModel = MyInfoViewModel()
+    @State private var isAvatarSheetPresented = false // 控制头像预览弹窗
+    @State private var showSaveImageAlert = false // 控制保存提示
 
     var body: some View {
         NavigationView {
@@ -35,6 +38,18 @@ struct MyInfoView: View {
                                 .scaledToFill()
                                 .frame(width: 100, height: 100)
                                 .clipShape(Circle())
+                                .onTapGesture {
+                                    // 点击头像，显示大图
+                                    isAvatarSheetPresented = true
+                                }
+                                .contextMenu {
+                                    // 长按头像弹出保存选项
+                                    Button(action: {
+                                        showSaveImageAlert = true
+                                    }) {
+                                        Label("保存图片", systemImage: "square.and.arrow.down")
+                                    }
+                                }
                         } else {
                             // 如果 avatarURL 为空，显示默认头像
                             Image(systemName: "person.crop.circle.fill")
@@ -50,46 +65,43 @@ struct MyInfoView: View {
                         Text(userInfo.email).font(.subheadline).foregroundColor(.gray)
                         
                         // 用户性别和生日
-                        HStack {
-                            Text("性别: \(userInfo.gender)")
-                            Spacer()
-                            if let birthday = userInfo.birthday {
-                                Text("生日: \(birthday, style: .date)")
-                            }
-                        }
-                        .padding(.horizontal)
+                        Text("性别：\(userInfo.gender)")
+                        Text("生日：\(userInfo.birthday, style: .date)").environment(\.locale, Locale(identifier: "zh_CN"))
                         
-                        // 用户帖子和收藏
-                        Section(header: Text("我的帖子")) {
-                            ForEach(userInfo.posts) { post in
-                                NavigationLink(destination: PostDetailView(post: post)) {
-                                    Text(post.title)
+                    
+                        HStack{
+                            // 用户帖子和收藏
+                            Section(header: Text("我的帖子")) {
+                                ForEach(userInfo.posts) { post in
+                                    NavigationLink(destination: PostDetailView(post: post)) {
+                                        Text(post.title)
+                                    }
+                                }
+                            }
+                            
+                            Section(header: Text("我的收藏")) {
+                                ForEach(userInfo.favorites) { post in
+                                    NavigationLink(destination: PostDetailView(post: post)) {
+                                        Text(post.title)
+                                    }
                                 }
                             }
                         }
-
-                        Section(header: Text("我的收藏")) {
-                            ForEach(userInfo.favorites) { post in
-                                NavigationLink(destination: PostDetailView(post: post)) {
-                                    Text(post.title)
-                                }
-                            }
-                        }
-                        
-                        // 设置按钮
-                        NavigationLink("设置", destination: SettingsView(userInfo: $viewModel.userInfo))
-                            .buttonStyle(.borderedProminent)
-                        
-                        // 退出登录
-                        Button("退出登录") {
-                            viewModel.logout()
-                        }
-                        .foregroundColor(.red)
                     }
                     .padding()
                 }
+                .navigationBarItems(trailing: NavigationLink(destination: SettingsView(userInfo: $viewModel.userInfo)) {
+                    Image(systemName: "gearshape")
+                        .imageScale(.large)
+                })
             } else if let errorMessage = viewModel.errorMessage {
                 Text("加载失败: \(errorMessage)")
+            }
+        }
+        // 弹窗展示头像预览
+        .sheet(isPresented: $isAvatarSheetPresented) {
+            if let avatarURL = viewModel.userInfo?.avatarURL {
+                AvatarPreviewView(imageURL: avatarURL, isPresented: $isAvatarSheetPresented)
             }
         }
         .onAppear {

@@ -16,7 +16,7 @@ struct RegisterView: View {
     private var isFormValid: Bool {
         !viewModel.username.isEmpty &&
         !viewModel.password.isEmpty &&
-        viewModel.password == viewModel.confirmPassword &&
+        !viewModel.confirmPassword.isEmpty &&
         !viewModel.email.isEmpty
     }
     
@@ -45,6 +45,7 @@ struct RegisterView: View {
                         .labelsHidden()
                         .padding(.horizontal)
                         .cornerRadius(8)
+                        .environment(\.locale, Locale(identifier: "zh_CN")) // 设置为中文显示
                 }
                 
                 VStack {
@@ -72,7 +73,7 @@ struct RegisterView: View {
                 
                 // 注册按钮
                 Button(action: {
-                    viewModel.register()
+                    viewModel.register(isFormValid: isFormValid)
                 }) {
                     Text(viewModel.isRegistering ? "注册中..." : "注册")
                         .frame(maxWidth: .infinity)
@@ -107,13 +108,11 @@ struct RegisterView: View {
             Text(title)
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 1)
+                .padding(.bottom, 5)
                 .padding(.top, 7)
             
             if isSecure {
-                SecureField(placeholder, text: text)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.horizontal)
+                PasswordField(password: text, placeholder: placeholder)
             } else {
                 TextField(placeholder, text: text)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -121,19 +120,9 @@ struct RegisterView: View {
             }
         }
     }
-    
-    private func handleRegister() {
-        guard isFormValid else {
-            viewModel.errorMessage = "请填写完整的表单"
-            return
-        }
-        
-        // 检查密码是否匹配
-        guard viewModel.password == viewModel.confirmPassword else {
-            viewModel.errorMessage = "密码不一致"
-            return
-        }
-    }
 }
 
 
+#Preview {
+    RegisterView(viewModel: RegisterViewModel())
+}

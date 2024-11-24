@@ -25,19 +25,18 @@ class RegisterViewModel: ObservableObject {
         self.userModel = userModel
     }
     
-    func register() {
+    func register(isFormValid: Bool) {
         // 清除之前的错误信息
         errorMessage = ""
         
-        // 验证密码不能为空
-        guard !password.isEmpty && !password.trimmingCharacters(in: .whitespaces).isEmpty else {
-            errorMessage = "密码不能为空"
+        guard isFormValid else {
+            self.errorMessage = "请填写完整的表单"
             return
         }
         
-        // 验证性别是否合法
-        guard gender == "男" || gender == "女" else {
-            errorMessage = "性别为男/女"
+        // 检查密码是否匹配
+        guard self.password == self.confirmPassword else {
+            self.errorMessage = "两次输入的密码不一致"
             return
         }
         
